@@ -59,5 +59,86 @@ Red Hat OpenStack Platform 8 Installation and Deployment
     * Delegating tagged VLAN traffic
   6. Tagged VLANs need switches that support 802.1Q standards
   7. Use consistent/fixed NIC name across all Overcloud machines to avoid confusion. I.e. primary NIC for Provisioning network and secondary NIC for OpenStack services.
-  
-  
+
+### Deploying Undercloud (Director)
+Create a director installation user 'stack'
+ * Non-root
+ * password-less sudo access
+
+Perform the following as the stack user.
+1. Create directories in stack's home directory
+ * ~/images
+ * ~/templates
+2. Set hostname for the director (use hostnamectl)
+3. Add director host name (both FQDN and alias) into /etc/hosts (to 127.0.0.1)
+ * Must set or the script will fail, even if a DNS is available
+4. Register to RH CDN or prepare the director with the following Yum repositories
+ * base (from RHEL-7 installation DVD)
+ * rhel-7-server-rpms (from OSP-8 installation DVD)
+ * rhel-7-server-extras-rpms (from OSP-8 installation DVD)
+ * rhel-7-server-openstack-8-rpms (from OSP-8 installation DVD)
+ * rhel-7-server-openstack-8-director-rpms (from OSP-8 installation DVD)
+ * rhel-7-server-rh-common-rpms (from OSP-8 installation DVD)
+5. sudo yum update -y; sudo reboot
+6. sudo yum install -y python-tripleoclient
+7. Prepare a local CA in director host (if using self-signed certs)
+ * See Preparing a Local CA
+8. cp /usr/share/instack-undercloud/undercloud.conf.sample ~/undercloud.conf
+9. Upate the ~/ca/undercloud.conf file with following parameters
+ * local_ip
+ * network_gateway
+ * undercloud_public_vip
+ * undercloud_admin_vip
+ * undercloud_service_certificate (needs cert from step #7)
+ * local_interface
+ * network_cidr
+ * masquerade_network
+ * dhcp_start, dhcp_end
+ * inspection_interface
+ * inspection_iprange
+ * inspection_extras
+ * inspection_runbench
+ * undercloud_debug
+ * enable_tempest
+ * ipxe_deploy
+ * store_events
+ * Passwords: undercloud_db_password, undercloud_admin_token, undercloud_admin_password, undercloud_glance_password, etc
+10. openstack undercloud install
+
+### Preparing a Local CA
+Perform the following as the stack user, in the ca directory (create one if not exists)
+1. openssl genrsa -out ca.key.pem 4096
+2. openssl req -key ca.key.pem -new -x509 -days 7300 -extensions v3_ca -out ca.crt.pem
+3. sudo cp ca.crt.pem /etc/pki/ca-trust/source/anchors/
+4. sudo update-ca-trust extract
+5. sudo cp ca.key.pem /etc/pki/CA/private/
+6. If does not exists: sudo touch /etc/pki/CA/index.txt
+7. If does not exists (as root): echo 1000 > /etc/pki/CA/serial
+8. cp /etc/pki/tls/openssl.cnf ~/ca/
+9. Update the ~/ca/openssl.cnf for following:
+ * \[ CA_default \]
+  - private_key = $dir/private/ca.key.pem
+ * \[ req \] 
+  - distinguished_name = req_distinguished_name
+  - req_extensions = v3_req
+ * \[ req_distinguished_name \]
+  - commonName_default = <same as undercloud_public_vip> (for undercloud)
+  - commonName_default = <1st address of ExternalAllocationPools> (for overcloud) 
+ * \[ alt_names \]
+  - IP.1 = <same IP used in req_distinguished_name.commonName_default>
+10. openssl genrsa -out server.key.pem 2048
+11. openssl req -config openssl.cnf -key server.key.pem -new -out server.csr.pem
+12. sudo openssl ca -config openssl.cnf -extensions v3_req -days 3650 -in server.csr.pem -out server.crt.pem -cert ca.cert.pem
+
+_For Undercloud_
+1. cat server.crt.pem server.key.pem > undercloud.pem
+2. sudo mkdir /etc/pki/instack-certs
+3. sudo cp undercloud.pem /etc/pki/instack-certs/
+4. sudo semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.\*)?"
+5. sudo restorecon -Rv /etc/pki/instack-certs/
+6. The resulting undercloud.pem is to be used as value to undercloud_service_certificate in undercloud.conf, i.e.
+undercloud_service_certificate = /etc/pki/instack-certs/undercloud.pem
+
+_For Overcloud_
+TODO
+ 
