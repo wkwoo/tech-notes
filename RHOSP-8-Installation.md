@@ -136,6 +136,7 @@ Create a director installation user 'stack'
 ### Setting a Nameserver on the Undercloud's Neutron Subnet
 1. `neutron subnet-list`
 2. `neutron subnet-update <subnet-uuid> --dns-nameserver <nameserver-ip>`. For example, assuming 192.168.101.2 has been configured as a DNS server: `neutron subnet-update 42178b17-68ea-452f-9ee2-b02ea87a27e9 --dns-nameserver 192.168.101.2`
+3. `neutron subnet-show <subnet-uuid>`
 
 ## Preparing a Local CA
 Perform the following **as the `stack` user**, in the `ca` directory (create one if not exists)
