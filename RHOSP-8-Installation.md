@@ -120,6 +120,23 @@ Create a director installation user 'stack'
 6. `cat /etc/sysconfig/network-scripts/ifcfg-br-ctlplane`
 7. `ip a`
 
+## Configuring Undercloud After Installation
+**Perform the following as the stack user.**
+
+### Preparing Images for Overcloud Nodes
+1. `sudo yum install rhosp-director-images rhosp-director-images-ipa`
+2. `cp /usr/share/rhosp-director-images/overcloud-full-latest-8.0.tar ~/images/.`
+3. `cp /usr/share/rhosp-director-images/ironic-python-agent-latest-8.0.tar ~/images/.`
+4. `cd ~/images`
+5. `for tarfile in *.tar; do tar -xf $tarfile; done`
+6. `openstack overcloud image upload --image-path /home/stack/images/`
+7. `openstack image list`
+8. `ls -l /httpboot`
+
+### Setting a Nameserver on the Undercloud's Neutron Subnet
+1. `neutron subnet-list`
+2. `neutron subnet-update <subnet-uuid> --dns-nameserver <nameserver-ip>`. For example, assuming 192.168.101.2 has been configured as a DNS server: `neutron subnet-update 42178b17-68ea-452f-9ee2-b02ea87a27e9 --dns-nameserver 192.168.101.2`
+
 ## Preparing a Local CA
 Perform the following **as the `stack` user**, in the `ca` directory (create one if not exists)
 1. `openssl genrsa -out ca.key.pem 4096`
