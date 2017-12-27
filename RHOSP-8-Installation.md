@@ -117,15 +117,15 @@ Perform the following as the stack user, in the ca directory (create one if not 
 8. cp /etc/pki/tls/openssl.cnf ~/ca/
 9. Update the ~/ca/openssl.cnf for following:
  * \[ CA_default \]
-  - private_key = $dir/private/ca.key.pem
+  *- private_key = $dir/private/ca.key.pem
  * \[ req \] 
-  - distinguished_name = req_distinguished_name
-  - req_extensions = v3_req
+  *- distinguished_name = req_distinguished_name
+  *- req_extensions = v3_req
  * \[ req_distinguished_name \]
-  - commonName_default = <same as undercloud_public_vip> (for undercloud)
-  - commonName_default = <1st address of ExternalAllocationPools> (for overcloud) 
+  *- commonName_default = \<same as undercloud_public_vip\> (for undercloud)
+  *- commonName_default = \<1st address of ExternalAllocationPools\> (for overcloud) 
  * \[ alt_names \]
-  - IP.1 = <same IP used in req_distinguished_name.commonName_default>
+  *- IP.1 = <same IP used in req_distinguished_name.commonName_default>
 10. openssl genrsa -out server.key.pem 2048
 11. openssl req -config openssl.cnf -key server.key.pem -new -out server.csr.pem
 12. sudo openssl ca -config openssl.cnf -extensions v3_req -days 3650 -in server.csr.pem -out server.crt.pem -cert ca.cert.pem
