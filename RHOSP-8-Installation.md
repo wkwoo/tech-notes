@@ -109,6 +109,7 @@ Create a director installation user 'stack'
         * `undercloud_glance_password`, 
         * etc
 10. `openstack undercloud install` - The installation will take quite a while.
+11. The undercloud installation log is located at `/home/stack/.instack/install-undercloud.log`
 
 ### To Verify the Undercloud Installation
 **Perform the following as the stack user.**
