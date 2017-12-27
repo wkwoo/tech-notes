@@ -127,10 +127,18 @@ Perform the following **as the `stack` user**, in the `ca` directory (create one
        - `distinguished_name = req_distinguished_name`
        - `req_extensions = v3_req`
     * `[ req_distinguished_name ]`
-       - `commonName_default = <same as undercloud_public_vip>` (for undercloud)
-       - `commonName_default = <1st address of ExternalAllocationPools>` (for overcloud) 
+        - Update:
+            - `countryName_default`
+            - `stateOrProvinceName_default`
+            - `localityName_default`
+            - `organizationalUnitName_default` (if applicable)
+        - Make sure that:
+            - `commonName_default = <same as undercloud_public_vip>` (for undercloud)
+            - `commonName_default = <1st address of ExternalAllocationPools>` (for overcloud) 
+    * `[ v3_req ]`
+        - `subjectAltName = @alt_names`
     * `[ alt_names ]`
-       - `IP.1 = <same IP used in req_distinguished_name.commonName_default>`
+        - `IP.1 = <same IP used in req_distinguished_name.commonName_default>`
 10. `openssl genrsa -out server.key.pem 2048`
 11. `openssl req -config openssl.cnf -key server.key.pem -new -out server.csr.pem`
 12. `sudo openssl ca -config openssl.cnf -extensions v3_req -days 3650 -in server.csr.pem -out server.crt.pem -cert ca.cert.pem`
