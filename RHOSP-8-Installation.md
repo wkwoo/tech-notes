@@ -108,7 +108,17 @@ Create a director installation user 'stack'
         * `undercloud_admin_password`, 
         * `undercloud_glance_password`, 
         * etc
-10. `openstack undercloud install`
+10. `openstack undercloud install` - The installation will take quite a while.
+
+### To Verify the Undercloud Installation
+**Perform the following as the stack user.**
+1. Source the stackrc profile: `. ~/stackrc`
+2. `openstack endpoint list`
+3. `openstack host list`
+4. `python -m json.tool /etc/os-net-config/config.json`
+5. `sudo ovs-vsctl show`
+6. `cat /etc/sysconfig/network-scripts/ifcfg-br-ctlplane`
+7. `ip a`
 
 ## Preparing a Local CA
 Perform the following **as the `stack` user**, in the `ca` directory (create one if not exists)
