@@ -141,7 +141,7 @@ Perform the following **as the `stack` user**, in the `ca` directory (create one
         - `IP.1 = <same IP used in req_distinguished_name.commonName_default>`
 10. `openssl genrsa -out server.key.pem 2048`
 11. `openssl req -config openssl.cnf -key server.key.pem -new -out server.csr.pem`
-12. `sudo openssl ca -config openssl.cnf -extensions v3_req -days 3650 -in server.csr.pem -out server.crt.pem -cert ca.cert.pem`
+12. `sudo openssl ca -config openssl.cnf -extensions v3_req -days 3650 -in server.csr.pem -out server.crt.pem -cert ca.crt.pem`
 
 **For Undercloud**
 1. `cat server.crt.pem server.key.pem > undercloud.pem`
