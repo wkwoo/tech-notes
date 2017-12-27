@@ -82,7 +82,7 @@ Create a director installation user 'stack'
 5. `sudo yum update -y; sudo reboot`
 6. `sudo yum install -y python-tripleoclient`
 7. Prepare a local CA in director host (if using self-signed certs)
-    * See Preparing a Local CA
+    * See [Preparing a Local CA](https://github.com/wkwoo/tech-notes/blob/master/RHOSP-8-Installation.md#preparing-a-local-ca)
 8. `cp /usr/share/instack-undercloud/undercloud.conf.sample ~/undercloud.conf`
 9. Upate the `~/ca/undercloud.conf` file with following parameters
     * `local_ip`
