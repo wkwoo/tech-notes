@@ -118,7 +118,7 @@ Perform the following **as the `stack` user**, in the `ca` directory (create one
 4. `sudo update-ca-trust extract`
 5. `sudo cp ca.key.pem /etc/pki/CA/private/`
 6. If does not exists: `sudo touch /etc/pki/CA/index.txt`
-7. If does not exists (as root): `echo 1000 > /etc/pki/CA/serial`
+7. If does not exists: `sudo sh -c 'echo 1000 > /etc/pki/CA/serial'`
 8. `cp /etc/pki/tls/openssl.cnf ~/ca/`
 9. Update the `~/ca/openssl.cnf` for following:
     * `[ CA_default ]`
